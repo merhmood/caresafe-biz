@@ -9,8 +9,8 @@ import saveIcon from "@/assets/icons/save.png";
 import addIcon from "@/assets/icons/add.png";
 import backIcon from "@/assets/icons/back.png";
 import withAuthenticated from "@/components/withAuthenticated";
-import URL from "@/app/constants/URL";
 import customRequestInit from "@/utils/customRequestInit";
+import { API_URL } from "@/utils/constants";
 
 /**
  * ConfigureAppointmentPage component
@@ -35,7 +35,7 @@ function ConfigureAppointmentPage() {
     const options: RequestInit = customRequestInit(token, "PUT", fields);
     if (saveFields) {
       // Save the fields
-      fetch(`${URL}/appointment-fields`, options)
+      fetch(`${API_URL}/appointment-fields`, options)
         .then((data) => {
           localStorage.removeItem("fields");
           // Check if the token is valid
@@ -64,17 +64,22 @@ function ConfigureAppointmentPage() {
         Authorization: `Bearer ${token}`,
       },
     };
-    fetch(`${URL}/appointment-fields`, options)
+    // Fetch the fields
+    fetch(`${API_URL}/appointment-fields`, options)
       .then((data) => data.json())
       .then((data) => {
         let fields = localStorage.getItem("fields");
+        // Check if the token has expired
         if (
           data.msg === "Token has expired" ||
           (fields && JSON.parse(fields)?.msg === "Token has expired")
         ) {
+          // Remove the token and fields from the local storage
           localStorage.removeItem("token");
           localStorage.removeItem("fields");
-        } else {
+        }
+        // Add the fields to the local storage.
+        else {
           setFields(data);
           localStorage.setItem("fields", JSON.stringify(data));
           setLoadingFields(false);

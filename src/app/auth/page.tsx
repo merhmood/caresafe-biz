@@ -1,25 +1,20 @@
 "use client";
 
-import { ChangeEventHandler, useEffect, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 
 import SignUp from "@/components/SignUp";
 import Login from "@/components/Login";
+import signUpHandler from "@/utils/signupHandler";
+import AuthInput from "@/components/Input";
 import { redirect } from "next/navigation";
 import { LoginCredentials, SignUpCredentials } from "@/types/authCredentials";
-import AuthInput from "@/components/Input";
-import React from "react";
-
-const URL =
-  process.env.NODE_ENV === "development"
-    ? "http://127.0.0.1:8000"
-    : "https://api.omnihale.com";
+import { loginHandler } from "@/utils/loginHandler";
 
 export default function AuthPage() {
   // State for sign up form fields
   const [signUp, setSignUp] = useState<SignUpCredentials>({
     name: "",
     address: "",
-    state: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -115,21 +110,7 @@ export default function AuthPage() {
             );
             return (
               <React.Fragment key={index}>
-                {value[0] === "state" ? (
-                  // Renders a select field for the state
-                  <select
-                    className="mb-2 w-full text-xs px-4 py-2 border rounded-md text-gray-400"
-                    name="state"
-                    onChange={onChangeHandlerSignUp}
-                    defaultValue="state"
-                  >
-                    <option value="state" disabled hidden>
-                      state
-                    </option>
-                    <option value="Abuja">Abuja</option>
-                    <option value="Kaduna">Kaduna</option>
-                  </select>
-                ) : (
+                {
                   // Renders the input fields
                   <>
                     <AuthInput
@@ -148,7 +129,7 @@ export default function AuthPage() {
                       </p>
                     )}
                   </>
-                )}
+                }
               </React.Fragment>
             );
           })}
@@ -199,71 +180,4 @@ const getPlaceHolderandFieldType = (value: string) => {
       ? "email"
       : "text";
   return { placeholder, fieldType };
-};
-
-// Handles the login request
-const loginHandler = (
-  loginCredentials: LoginCredentials,
-  setIsUserLogin: (value: boolean) => void,
-  setErrorResponse: (value: string | null) => void,
-  setDisbaledLoginButton: (value: boolean) => void
-) => {
-  fetch(`${URL}/login`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ login: loginCredentials }),
-    method: "POST",
-  })
-    .then((data) => {
-      if (data.status === 200) {
-        location.href = "/";
-      }
-      if (data.status === 401) {
-        setErrorResponse("Invalid credentials");
-        setDisbaledLoginButton(false);
-      } else {
-        localStorage.removeItem("token");
-        localStorage.removeItem("fields");
-        localStorage.removeItem("user_id");
-      }
-      return data.json();
-    })
-    .then((data) => {
-      if (!data.message) {
-        localStorage.setItem("token", data.access_token);
-        localStorage.setItem("user_id", data.user);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
-
-// Handles the sign up request
-const signUpHandler = (
-  signUpCredentials: SignUpCredentials,
-  setUserSignUp: (value: boolean) => void,
-  setErrorResponse: (value: string | null) => void,
-  setDisableButton: (value: boolean | { (value: boolean): boolean }) => void
-) => {
-  fetch(`${URL}/signup`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ signUp: signUpCredentials }),
-    method: "POST",
-  })
-    .then((data) => {
-      if (data.status === 200) {
-        setUserSignUp(true);
-      }
-      if (data.status === 409) {
-        setErrorResponse("information already exists");
-        setDisableButton(false);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
 };

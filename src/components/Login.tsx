@@ -82,7 +82,7 @@ const Login = ({
             height={30}
             className="mr-3 rounded-md"
           />
-          <p className="font-semibold mr-1">Omnihale</p>
+          <p className="font-semibold mr-1">caresafe</p>
           <p className="text-gray-500">for Business</p>
         </div>
       </div>

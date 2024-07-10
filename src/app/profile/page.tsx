@@ -8,7 +8,7 @@ import Image, { StaticImageData } from "next/image";
 import backIcon from "@/assets/icons/back.png";
 import saveIcon from "@/assets/icons/save.png";
 import withAuthenticated from "@/components/withAuthenticated";
-import URL from "@/app/constants/URL";
+import { API_URL } from "@/utils/constants";
 import customRequestInit from "@/utils/customRequestInit";
 
 type ProfileDetails = {
@@ -35,7 +35,7 @@ function ProfilePage() {
     }
     const options: RequestInit = customRequestInit(token, "GET");
     // Get user profile details
-    fetch(`${URL}/profile`, options)
+    fetch(`${API_URL}/profile`, options)
       .then((res) => res.json())
       .then((data: ProfileDetails) => {
         setProfileDetails(data);
@@ -54,7 +54,7 @@ function ProfilePage() {
     );
 
     // update user profile details
-    fetch(`${URL}/profile`, options)
+    fetch(`${API_URL}/profile`, options)
       .then((res) => res.json())
       .then((data) => {
         if (data.message == "profile updated") {

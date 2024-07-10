@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = LocalFont({ src: "../assets/fonts/Satoshi-Variable.ttf" });
 
 export const metadata: Metadata = {
-  title: "Omnihale | Business",
+  title: "caresafe | Business",
   description: "Enabling care giver providing their services easily",
   icons: "/logo.svg",
 };
